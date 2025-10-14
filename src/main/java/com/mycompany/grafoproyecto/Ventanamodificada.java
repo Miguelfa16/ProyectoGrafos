@@ -32,6 +32,7 @@ public class Ventanamodificada extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
+        mostrargrafo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -42,19 +43,33 @@ public class Ventanamodificada extends javax.swing.JFrame {
             }
         });
 
+        mostrargrafo.setText("Mostrar grafo");
+        mostrargrafo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mostrargrafoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(281, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(mostrargrafo)))
+                .addContainerGap(278, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(267, Short.MAX_VALUE)
+                .addContainerGap(226, Short.MAX_VALUE)
+                .addComponent(mostrargrafo)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -69,21 +84,29 @@ public class Ventanamodificada extends javax.swing.JFrame {
            if (ventanaBusqueda == JFileChooser.APPROVE_OPTION){
                File archivoSeleccionado = selectorArchivos.getSelectedFile();
                if (archivoSeleccionado.getName().toLowerCase().endsWith(".txt")){
-                   ControladorGrafos.CargarGrafo(archivoSeleccionado) ;
+                   ControladorGrafos.CargarGrafo(archivoSeleccionado);
+                    JOptionPane.showMessageDialog(this, "Grafo cargado y visualizacion iniciada");
                }
                else {
                    JOptionPane.showMessageDialog(this,"Error", "Su archivo debe ser de tipo .txt",
                            JOptionPane.WARNING_MESSAGE); 
                    
-                   
+    
+    
+
                }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void mostrargrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostrargrafoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mostrargrafoActionPerformed
 }
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton mostrargrafo;
     // End of variables declaration//GEN-END:variables
 
 }
