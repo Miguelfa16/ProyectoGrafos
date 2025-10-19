@@ -11,14 +11,13 @@ import javax.swing.JOptionPane;
  *
  * @author malej
  */
-public class Ventana extends javax.swing.JFrame {
+public class Ventanamodificada extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Ventana.class.getName());
 
     /**
      * Creates new form Ventana
      */
-    public Ventana() {
+    public Ventanamodificada() {
         initComponents();
     }
 
@@ -66,15 +65,11 @@ public class Ventana extends javax.swing.JFrame {
         JFileChooser selectorArchivos = new JFileChooser();
            selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
            int ventanaBusqueda = selectorArchivos.showOpenDialog(this);  
-           if (ventanaBusqueda == selectorArchivos.APPROVE_OPTION){
+           if (ventanaBusqueda == JFileChooser.APPROVE_OPTION){
                File archivoSeleccionado = selectorArchivos.getSelectedFile();
                if (archivoSeleccionado.getName().toLowerCase().endsWith(".txt")){
-<<<<<<< Updated upstream:Ventana.java
-                   //LLAMAR METODO QUE CARGUE GRAFOS 
-=======
                    ControladorGrafos.CargarGrafo(archivoSeleccionado);
                     JOptionPane.showMessageDialog(this, "Grafo cargado y visualizacion iniciada");
->>>>>>> Stashed changes:src/main/java/com/mycompany/grafoproyecto/Ventanamodificada.java
                }
                else {
                    JOptionPane.showMessageDialog(this,"Error", "Su archivo debe ser de tipo .txt",
