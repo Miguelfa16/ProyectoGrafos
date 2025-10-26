@@ -7,7 +7,33 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
-        <exec.mainClass>com.mycompany.proyectorecuperado.Proyectorecuperado</exec.mainClass>
+        <maven.compiler.release>24</maven.compiler.release>
+        <exec.mainClass>com.mycompany.proyectoestructuras.ProyectoEstructuras</exec.mainClass>
     </properties>
+<dependencies>
+    
+
+
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-core</artifactId>
+        <version>2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-ui-swing</artifactId>
+        <version>2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-algo</artifactId>
+        <version>2.0</version>
+    </dependency>
+
+
+
+</dependencies>
+    <name>grafoproyecto</name>
 </project>

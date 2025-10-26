@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.proyectorecuperado;
+package com.mycompany.grafoproyecto;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import java.io.IOException;
 
 /**
  *
@@ -62,25 +63,33 @@ public class Ventanamodificada extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        JFileChooser selectorArchivos = new JFileChooser();
-           selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
-           int ventanaBusqueda = selectorArchivos.showOpenDialog(this);  
-           if (ventanaBusqueda == JFileChooser.APPROVE_OPTION){
-               File archivoSeleccionado = selectorArchivos.getSelectedFile();
-               if (archivoSeleccionado.getName().toLowerCase().endsWith(".txt")){
-                   ControladorGrafos.CargarGrafo(archivoSeleccionado);
-                    JOptionPane.showMessageDialog(this, "Grafo cargado y visualizacion iniciada");
-               }
-               else {
-                   JOptionPane.showMessageDialog(this,"Error", "Su archivo debe ser de tipo .txt",
-                           JOptionPane.WARNING_MESSAGE); 
-                   
-    
-    
-
-               }
+    JFileChooser selectorArchivos = new JFileChooser();
+    selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    int ventanaBusqueda = selectorArchivos.showOpenDialog(this);  
+    if (ventanaBusqueda == JFileChooser.APPROVE_OPTION){
+        File archivoSeleccionado = selectorArchivos.getSelectedFile();
+        //Validacion .txt
+        if (archivoSeleccionado.getName().toLowerCase().endsWith(".txt")){     
+            //Aviso de carga y carga 
+            if(ControladorGrafos.getGrafoActual()!= null){
+            int confirmacion = JOptionPane.showConfirmDialog(this, "Se cargara un nuevo grafo, este archivo remplazara a los anteriores.", 
+            "Advertencia de Sobrescritura",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+            if (confirmacion == JOptionPane.YES_OPTION){ 
+                try {
+                    ControladorGrafos.CargarGrafo(archivoSeleccionado);
+                    JOptionPane.showMessageDialog(this, "Grafo cargado exitosamente.");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error al leer el archivo: " + e.getMessage(), "Error de Carga", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Su archivo debe ser de tipo .txt",
+                    "Error de Formato", JOptionPane.WARNING_MESSAGE);                     
+            }                                     
     }//GEN-LAST:event_jButton1ActionPerformed
 }
+
     /**
      * @param args the command line arguments
      */

@@ -1,4 +1,4 @@
-package com.mycompany.proyectorecuperado;
+package com.mycompany.grafoproyecto;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -11,25 +11,27 @@ package com.mycompany.proyectorecuperado;
  * @author samir
  */
 public class Usuario {
-    private final String nombre; // Ejemplo: "Samir"
+    private final String nombre; 
 
     // Constructor
     public Usuario(String nombre) {
         this.nombre = nombre;
     }
 
-    // Getter
+    
     public String getNombre() {
         return nombre;
     }
 
-    // Sobrescribir equals() y hashCode() es crucial para que las colecciones 
-    // de Java (como HashMap y HashSet) puedan identificar correctamente a dos 
-    // usuarios con el mismo nombre como el mismo objeto, lo cual es vital para el grafo.
+//funciones para comparar dos objetos usuario 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
         Usuario usuario = (Usuario) o;
         return nombre.equals(usuario.nombre);
     }
@@ -39,7 +41,7 @@ public class Usuario {
         return nombre.hashCode();
     }
     
-    // Opcional, pero útil para imprimir la información del usuario
+   //revisar si se utiliza finalmente!!
     @Override
     public String toString() {
         return nombre;
