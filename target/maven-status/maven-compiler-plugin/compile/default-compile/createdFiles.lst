@@ -1,6 +1,8 @@
-com\mycompany\proyectorecuperado\Ventanamodificada.class
-com\mycompany\proyectorecuperado\Usuario.class
-com\mycompany\proyectorecuperado\Ventanamodificada$1.class
-com\mycompany\proyectorecuperado\Analisis_grafos.class
-com\mycompany\proyectorecuperado\Grafo.class
-com\mycompany\proyectorecuperado\ControladorGrafos.class
+com\mycompany\grafoproyecto\Grafo.class
+com\mycompany\grafoproyecto\Ventanamodificada.class
+com\mycompany\grafoproyecto\Usuario.class
+com\mycompany\grafoproyecto\ControladorGrafos.class
+com\mycompany\grafoproyecto\Pila.class
+com\mycompany\grafoproyecto\VisualGrafo.class
+com\mycompany\grafoproyecto\Ventanamodificada$1.class
+com\mycompany\grafoproyecto\Analisis_grafos.class

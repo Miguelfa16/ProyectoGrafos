@@ -99,7 +99,32 @@ public class Grafo {
     public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
-     }
+public boolean agregarRelaciones(String nombreOrigen, String nombreDestino) {
+    // 1. Verificar si los usuarios existen en el grafo
+    if (usuarios.containsKey(nombreOrigen) && usuarios.containsKey(nombreDestino)) {
+        
+        Usuario origen = usuarios.get(nombreOrigen);
+        Usuario destino = usuarios.get(nombreDestino);
+        
+        // 2. Asumimos que la clase Usuario tiene un método para agregar vecinos.
+        // Si tu clase Usuario tiene una lista/set de vecinos, la llamada sería algo así:
+        // origen.agregarVecino(destino);
+        
+        // Si tienes un método específico para agregar aristas, úsalo aquí.
+        // Por ejemplo, si tu arista se maneja solo en la lista de adyacencia del origen:
+        origen.getVecinos().add(destino); 
+        
+        return true;
+    }    
+
+// Si llegamos aquí, significa que la condición del IF no se cumplió.
+    return false; // Retorna FALSE si uno o ambos usuarios no existen.
+}
+
+
+
+
+}
     // ¡RECUERDA!
     // Aquí es donde deberás implementar la lógica para el Requerimiento B (Eliminar Usuario)
     // y el Requerimiento C (Actualizar Repositorio, que requerirá un método para

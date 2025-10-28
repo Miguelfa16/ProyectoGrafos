@@ -32,19 +32,24 @@ public class ControladorGrafos {
      * (Requerimiento C - Carga Inicial).
      * El archivo se busca con el nombre "grafo_inicial.txt" en la raíz del proyecto.
      */
-public static void GrafoInicial() {
-    File archivoInicial = new File("grafo_inicial.txt"); 
+    public static void GrafoInicial() {
+    File archivoInicial = new File("grafo_inicial.txt");
+    
+    // 1. Comienza el IF
     if (archivoInicial.exists() && archivoInicial.canRead()) {
         try {
             CargarGrafo(archivoInicial);
         } catch (IOException e) {
             LOGGER.severe("Error al leer el archivo inicial: " + e.getMessage());
-        }
-        
-    } else {
+        } 
+    } // 🚨 CLAVE: Cierra el bloque IF aquí, antes del ELSE
+    
+    // 2. Comienza el ELSE
+    else { 
         LOGGER.severe("Error: No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
     }
 }
+
     
     /**
      * Carga la información de usuarios y relaciones desde un archivo de texto 
@@ -74,23 +79,40 @@ public static void GrafoInicial() {
                 if (modo.equals("USUARIOS")) {
                     grafoActual.agregarUsuario(line);
                     
-                } else if (modo.equals("RELACIONES")) {
-                    // Separa la cadena por la coma y el espacio (", ")
-                    String[] parts = line.split(", "); 
-                    if (parts.length == 2) {
-                        grafoActual.agregarRelaciones(parts[0], parts[1]);
+               } else if (modo.equals("RELACIONES")) {
+                // Separa la cadena por la coma y el espacio (", ")
+                // (NOTA: Es más seguro usar line.split(",") y luego .trim()
+                // como discutimos, pero mantengo tu split original por ahora).
+                String[] partes = line.split(", "); 
+                
+                // Abre el bloque IF: Solo procesar si hay dos partes.
+                if (partes.length == 2) { 
+                    
+                    // 🚨 La asignación de variables DEBE ir dentro de este IF 🚨
+                    String origen = partes[0].trim();
+                    String destino = partes[1].trim();
+
+                    // Verificar que los nombres no estén vacíos (solo por seguridad)
+                    if (!origen.isEmpty() && !destino.isEmpty()) {
+                        grafoActual.agregarRelaciones(origen, destino);
                     }
-                }
-            }
-        } 
-    }
-    
-    /**
-     * Permite obtener la instancia actual del grafo cargado en memoria.
-     * @return El objeto Grafo Dirigido o null si no se ha cargado nada.
-     */
-    public static Grafo getGrafoActual() {
-        return grafoActual;
-    }
+                } // <--- CIERRA el if (partes.length == 2)
+                
+            } // <--- CIERRA el else if (modo.equals("RELACIONES"))
+            // Las llaves del bucle while y del try-with-resources deben estar aquí.
+            
+        } // <--- CLAVE: Cierra el bucle while
+    } // <--- CLAVE: Cierra el try-with-resources
+} // <--- CLAVE: Cierra el método public static void CargarGrafo(File archivo)
+
+/**
+ * Permite obtener la instancia actual del grafo cargado en memoria.
+ * @return El objeto Grafo Dirigido o null si no se ha cargado nada.
+ */
+public static Grafo getGrafoActual() {
+    return grafoActual;
 }
 
+
+}
+// <--- CIERRA la clase public class ControladorGrafos {

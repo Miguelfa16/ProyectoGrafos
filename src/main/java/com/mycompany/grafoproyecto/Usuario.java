@@ -4,24 +4,25 @@ package com.mycompany.grafoproyecto;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+import java.util.ArrayList; // 🚨 ¡Necesitas esta importación! 🚨
+import java.util.List;
 
 
 /**
  *
  * @author samir
- */
-public class Usuario {
-    private final String nombre; 
+ */public class Usuario {
+    private final String nombre;
+    
+    private final List<Usuario> vecinos; 
 
     // Constructor
     public Usuario(String nombre) {
         this.nombre = nombre;
+        
+        this.vecinos = new ArrayList<>(); 
     }
 
-    
-    public String getNombre() {
-        return nombre;
-    }
 
 //funciones para comparar dos objetos usuario 
     @Override
@@ -47,4 +48,7 @@ public class Usuario {
         return nombre;
     }
     
+    public List<Usuario> getVecinos() {
+        return vecinos;
+    }
 }
