@@ -20,6 +20,8 @@ public class Ventanamodificada extends javax.swing.JFrame {
      */
     public Ventanamodificada() {
         initComponents();
+        ControladorGrafos.GrafoInicial();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -31,14 +33,30 @@ public class Ventanamodificada extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        BotonCargarArchivo = new javax.swing.JButton();
+        MostrarGrafo = new javax.swing.JButton();
+        EditarGrafo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Cargar Archivo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        BotonCargarArchivo.setText("Cargar Archivo");
+        BotonCargarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                BotonCargarArchivoActionPerformed(evt);
+            }
+        });
+
+        MostrarGrafo.setText("Mostrar Grafo ");
+        MostrarGrafo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MostrarGrafoActionPerformed(evt);
+            }
+        });
+
+        EditarGrafo.setText("Editar Grafo Cargado");
+        EditarGrafo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EditarGrafoActionPerformed(evt);
             }
         });
 
@@ -48,53 +66,107 @@ public class Ventanamodificada extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(279, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BotonCargarArchivo)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(EditarGrafo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(MostrarGrafo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(248, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(271, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap(182, Short.MAX_VALUE)
+                .addComponent(BotonCargarArchivo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(MostrarGrafo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(EditarGrafo)
+                .addGap(17, 17, 17))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void BotonCargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarArchivoActionPerformed
     JFileChooser selectorArchivos = new JFileChooser();
     selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
     int ventanaBusqueda = selectorArchivos.showOpenDialog(this);  
     if (ventanaBusqueda == JFileChooser.APPROVE_OPTION){
         File archivoSeleccionado = selectorArchivos.getSelectedFile();
-        //Validacion .txt
         if (archivoSeleccionado.getName().toLowerCase().endsWith(".txt")){     
-            //Aviso de carga y carga 
-            if(ControladorGrafos.getGrafoActual()!= null){
-            int confirmacion = JOptionPane.showConfirmDialog(this, "Se cargara un nuevo grafo, este archivo remplazara a los anteriores.", 
-            "Advertencia de Sobrescritura",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-            if (confirmacion == JOptionPane.YES_OPTION){ 
-                try {
-                    ControladorGrafos.CargarGrafo(archivoSeleccionado);
-                    JOptionPane.showMessageDialog(this, "Grafo cargado exitosamente.");
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, "Error al leer el archivo: " + e.getMessage(), "Error de Carga", JOptionPane.ERROR_MESSAGE);
+            Runnable cargarElGrafo = () -> {
+                    try {
+                        ControladorGrafos.CargarGrafo(archivoSeleccionado);
+                        JOptionPane.showMessageDialog(this, "Grafo cargado exitosamente.");
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(this, "Error al leer el archivo: " + e.getMessage(), "Error de Carga", JOptionPane.ERROR_MESSAGE);
+                    }
+                };
+                if (ControladorGrafos.getGrafoActual() != null) {
+                    int confirmacion = JOptionPane.showConfirmDialog(this, "Se cargará un nuevo grafo este archivo reemplazará al anterior.",
+                            "Advertencia perdida de Grafo Anterior", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);                   
+                    if (confirmacion == JOptionPane.YES_OPTION) {
+                        cargarElGrafo.run(); 
+                    }
+                } else {
+                    cargarElGrafo.run();
                 }
-            }
-            }
         } else {
             JOptionPane.showMessageDialog(this, "Su archivo debe ser de tipo .txt",
-                    "Error de Formato", JOptionPane.WARNING_MESSAGE);                     
-            }                                     
-    }//GEN-LAST:event_jButton1ActionPerformed
-}
+                    "Tipo de Archivo no valido", JOptionPane.WARNING_MESSAGE);                     
+            }                                   
+    }//GEN-LAST:event_BotonCargarArchivoActionPerformed
+    }
+    private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
+        Grafo GrafoCargado = ControladorGrafos.getGrafoActual(); 
+        if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().isEmpty()){ 
+            JOptionPane.showMessageDialog(this,"No hay ningun grafo cargado para mostrar", "Grafo Vacio", JOptionPane.ERROR_MESSAGE);
+        }else{ 
+            VisualGrafo ventanaGraficaGrafo = new VisualGrafo(GrafoCargado); 
+            ventanaGraficaGrafo.setVisible(true);
+        }
+    }//GEN-LAST:event_MostrarGrafoActionPerformed
+
+    private void EditarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarGrafoActionPerformed
+    String[] Opciones = {"Agregar Usuario", "Eliminar Usuario", "Cancelar"};
+    int seleccionOpciones = JOptionPane.showOptionDialog(null, "Seleeccione la Accion a Relaizar", "Editar Grafo", JOptionPane.DEFAULT_OPTION, 
+            JOptionPane.QUESTION_MESSAGE,null,Opciones, Opciones[0]);
+    if(seleccionOpciones == 1){ 
+        String NuevoUsuario = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario que desea agregar");
+        if(NuevoUsuario.startsWith("@")){
+            ControladorGrafos.getGrafoActual().agregarUsuario(NuevoUsuario);
+            String[] OpcionRelaciones = {"Agregar Relacion", "Cancelar"};
+            int seleccionOpcionesRelaciones = JOptionPane.showOptionDialog(null, "Con que usuarios se relaciona "+NuevoUsuario, "Relaciones Nuevo Usuario",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,OpcionRelaciones, OpcionRelaciones[0]);
+            if(seleccionOpcionesRelaciones == 1){ 
+            String NuevaRelacion = JOptionPane.showInputDialog(this, "Escriba el nombre del usuario con quien "+NuevoUsuario+"tiene relacion");
+            ControladorGrafos.getGrafoActual().agregarArista(NuevoUsuario, NuevaRelacion);
+        }
+        }else{ 
+            JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
+        }
+    }else if (seleccionOpciones == 2){ 
+        String UsuarioEliminar = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario del usuario que desea eliminar");
+        if(UsuarioEliminar.startsWith("@")){
+            
+        }else{ 
+            JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
+        }
+        
+    }else if (seleccionOpciones == 3 || seleccionOpciones == -1){
+        JOptionPane.showMessageDialog(null, "Accion Cancelada ");
+    }
+    }//GEN-LAST:event_EditarGrafoActionPerformed
+
 
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton BotonCargarArchivo;
+    private javax.swing.JButton EditarGrafo;
+    private javax.swing.JButton MostrarGrafo;
     // End of variables declaration//GEN-END:variables
 
 }

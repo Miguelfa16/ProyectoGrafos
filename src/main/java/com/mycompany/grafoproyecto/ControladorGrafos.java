@@ -32,19 +32,21 @@ public class ControladorGrafos {
      * (Requerimiento C - Carga Inicial).
      * El archivo se busca con el nombre "grafo_inicial.txt" en la raíz del proyecto.
      */
-public static void GrafoInicial() {
-    File archivoInicial = new File("grafo_inicial.txt"); 
+    public static void GrafoInicial() {
+    File archivoInicial = new File("grafo_inicial.txt");
+
     if (archivoInicial.exists() && archivoInicial.canRead()) {
         try {
             CargarGrafo(archivoInicial);
         } catch (IOException e) {
             LOGGER.severe("Error al leer el archivo inicial: " + e.getMessage());
-        }
-        
-    } else {
+        } 
+    } 
+    else { 
         LOGGER.severe("Error: No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
     }
 }
+
     
     /**
      * Carga la información de usuarios y relaciones desde un archivo de texto 
@@ -59,38 +61,43 @@ public static void GrafoInicial() {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty()) continue; // Ignora líneas vacías
-
-                // Lógica de Parsing para detectar las secciones del archivo
+                if (line.isEmpty()){
+                    continue;
+                } 
                 if (line.equals("usuarios")) {
                     modo = "USUARIOS";
                     continue;
                 } else if (line.equals("relaciones")) {
                     modo = "RELACIONES";
                     continue;
-                }
-                
+                }                
                 // Construcción del Grafo
                 if (modo.equals("USUARIOS")) {
-                    grafoActual.agregarUsuario(line);
-                    
-                } else if (modo.equals("RELACIONES")) {
-                    // Separa la cadena por la coma y el espacio (", ")
-                    String[] parts = line.split(", "); 
-                    if (parts.length == 2) {
-                        grafoActual.agregarRelaciones(parts[0], parts[1]);
+                    grafoActual.agregarUsuario(line);                    
+               } else if (modo.equals("RELACIONES")) {                               
+                String[] partes = line.split(", ");                                
+                if (partes.length == 2) {                                        
+                    String origen = partes[0].trim();
+                    String destino = partes[1].trim();                   
+                    if (!origen.isEmpty() && !destino.isEmpty()) {
+                        grafoActual.agregarArista(origen, destino);
                     }
-                }
-            }
+                } 
+                
+            } 
+            
+            
         } 
-    }
-    
-    /**
-     * Permite obtener la instancia actual del grafo cargado en memoria.
-     * @return El objeto Grafo Dirigido o null si no se ha cargado nada.
-     */
-    public static Grafo getGrafoActual() {
-        return grafoActual;
-    }
+    } 
+} 
+
+/**
+ * Permite obtener la instancia actual del grafo cargado en memoria.
+ * @return El objeto Grafo Dirigido o null si no se ha cargado nada.
+ */
+public static Grafo getGrafoActual() {
+    return grafoActual;
 }
 
+
+}

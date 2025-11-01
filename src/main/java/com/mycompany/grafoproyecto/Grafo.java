@@ -14,36 +14,29 @@ import java.util.Set;
 
 
 public class Grafo {
-    
-    //buscar rápidamente un objeto Usuario por su nombre
     private final Map<String, Usuario> usuarios; 
-    
-    // Lista de Adyacencia: Almacena las aristas dirigidas
-    // Clave: El Usuario que SIGUE (Origen)
-    // Valor: La lista de Usuarios que ES seguido (Destino)
-    private final Map<Usuario, List<Usuario>> ListaAdj; 
-
+    private final Map<Usuario, List<Usuario>> adjList; 
     /**
-     * Constructor de la clase Grafo
-     * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia
+     * Constructor de la clase Grafo.
+     * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia.
      */
     public Grafo() {
         this.usuarios = new HashMap<>();
-        this.ListaAdj = new HashMap<>();
+        this.adjList = new HashMap<>();
     }
 
     /**
-     * Agrega un nuevo usuario (nodo) al grafo dirigido
-     * Si el usuario ya existe, este método no realiza ninguna acción
-     * Se inicializa su lista de adyacencia como vacía
-     * @param nombre El nombre de usuario (String) a agregar
+     * Agrega un nuevo usuario (nodo) al grafo dirigido.
+     * Si el usuario ya existe, este método no realiza ninguna acción.
+     * Se inicializa su lista de adyacencia como vacía.
+     * @param nombre El nombre de usuario (String) a agregar, ej: "@pepe".
      */
     public void agregarUsuario(String nombre) {
         if (!usuarios.containsKey(nombre)) {
             Usuario nuevoUsuario = new Usuario(nombre);
             usuarios.put(nombre, nuevoUsuario);
             // Cada usuario debe tener su propia lista de vecinos (destinos)
-            ListaAdj.put(nuevoUsuario, new LinkedList<>()); 
+            adjList.put(nuevoUsuario, new LinkedList<>()); 
         }
     }
 
@@ -53,23 +46,26 @@ public class Grafo {
      * @param origenNombre El nombre del usuario que sigue (origen).
      * @param destinoNombre El nombre del usuario que es seguido (destino).
      */
-    public void agregarRelaciones(String origenNombre, String destinoNombre) {
+    public void agregarArista(String origenNombre, String destinoNombre) {
         Usuario origen = usuarios.get(origenNombre);
         Usuario destino = usuarios.get(destinoNombre);
+
+        // Verificación esencial para la tolerancia a fallos: ¿Existen ambos usuarios?
         if (origen != null && destino != null) {
-            ListaAdj.get(origen).add(destino);
+            // Se agrega 'destino' a la lista de adyacencia de 'origen'.
+            adjList.get(origen).add(destino);
         } else {
-            // JOptionPane para manejo de error
+            // Esto se manejaría con un JOptionPane en el Controlador para informar al usuario.
             System.err.println("Advertencia de Carga: Relación inválida con usuarios no existentes.");
         }
     }
     /**
-     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.
+     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.S
      * Es crucial para iniciar los recorridos de búsqueda (DFS) en el algoritmo de Kosaraju.
      * @return Un Set de objetos Usuario.
      */
     public Set<Usuario> getTodosLosUsuarios() {
-        return ListaAdj.keySet();
+        return adjList.keySet();
     }
     
     /**
@@ -79,7 +75,7 @@ public class Grafo {
      * @return Una List de objetos Usuario que son seguidos.
      */
     public List<Usuario> getVecinos(Usuario usuario) {
-        return ListaAdj.getOrDefault(usuario, new LinkedList<>());
+        return adjList.getOrDefault(usuario, new LinkedList<>());
     }
     
     /**
@@ -91,11 +87,5 @@ public class Grafo {
     public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
-     }
-
-
-    // ¡RECUERDA!
-    // Aquí es donde deberás implementar la lógica para el Requerimiento B (Eliminar Usuario)
-    // y el Requerimiento C (Actualizar Repositorio, que requerirá un método para
-    // recorrer y generar el texto de salida).
-
+}
+   //FALTA ELIMINAR Y ACTUALIZAR

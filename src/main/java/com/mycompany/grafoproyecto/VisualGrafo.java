@@ -9,6 +9,7 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 //import org.graphstream.ui.view.ViewPanel;
 import org.graphstream.ui.swing_viewer.SwingViewer;
+import org.graphstream.ui.swing_viewer.ViewPanel;
 import java.awt.BorderLayout;
 
 
@@ -17,39 +18,42 @@ import java.awt.BorderLayout;
  * @author samir
  */
 public class VisualGrafo extends javax.swing.JFrame {
-      // Añade una variable para guardar el objeto Grafo
+      
     private Grafo grafo;
 
-    // Modifica el constructor para aceptar el objeto Grafo
+    
     public VisualGrafo(Grafo grafo) {
-        this.grafo = grafo; // Guarda el grafo en la variable de clase
+        this.grafo = grafo; 
         initComponents();
-        inicializarVisualizacion(); 
+        IniciarVisualizacion(); 
     }
     
     // lógica grafico
-    private void inicializarVisualizacion() {
-   
-
-  
-    
- 
+    private void IniciarVisualizacion() {
+    System.setProperty("org.graphstream.ui", "swing");
+    Graph Grafo = new SingleGraph("Mi Grafo");  
     for (Usuario u : this.grafo.getTodosLosUsuarios()) { 
-       
-      
+       String nombreUsuario = u.toString();
+       Grafo.addNode(nombreUsuario);
+       Grafo.getNode(nombreUsuario).setAttribute("ui.label", nombreUsuario);
     } 
-
-
     for (Usuario origen : this.grafo.getTodosLosUsuarios()) { 
-        
-        for (Usuario destino : this.grafo.getVecinos(origen)) {            
-      
-          
+        String nombreOrigen = origen.toString();       
+        for (Usuario destino : this.grafo.getVecinos(origen)) {  
+            String nombreDestino = destino.toString();
+            String idArista = nombreOrigen + "->" + nombreDestino;
+            Grafo.addEdge(idArista, nombreOrigen, nombreDestino, true);                
         }
-    }
-    
-    
-    getContentPane().setLayout(new BorderLayout());
+    }    
+    SwingViewer viewer = new SwingViewer(Grafo, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+    viewer.enableAutoLayout();
+    org.graphstream.ui.swing_viewer.ViewPanel viewPanel = (org.graphstream.ui.swing_viewer.ViewPanel) viewer.addDefaultView(false);
+    this.getContentPane().setLayout(new BorderLayout());
+    this.getContentPane().add(viewPanel, BorderLayout.CENTER); 
+    this.setTitle("Visualizacion Grafo");
+    this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); 
+    this.pack();
+    this.setLocationRelativeTo(null);
    
     
     }
