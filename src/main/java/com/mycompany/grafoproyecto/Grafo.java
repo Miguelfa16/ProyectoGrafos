@@ -11,20 +11,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.ArrayList;
 
 public class Grafo {
-    
-    // Mapa para buscar rápidamente un objeto Usuario por su nombre (String).
     private final Map<String, Usuario> usuarios; 
-    
-    // Lista de Adyacencia: Almacena las aristas dirigidas.
-    // Clave: El Usuario que SIGUE (Origen)
-    // Valor: La lista de Usuarios que ES seguido (Destino)
     private final Map<Usuario, List<Usuario>> adjList; 
-
     /**
-     * Constructor de la clase Grafo.
+    
      * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia.
      */
     public Grafo() {
@@ -66,15 +59,10 @@ public class Grafo {
             System.err.println("Advertencia de Carga: Relación inválida con usuarios no existentes.");
         }
     }
-    
-    // ---------------------------------------------------------------------
-    // MÉTODOS DE UTILIDAD ESENCIALES PARA ANÁLISIS Y MODIFICACIÓN
-    // ---------------------------------------------------------------------
-
     /**
-     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.
+     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.S
      * Es crucial para iniciar los recorridos de búsqueda (DFS) en el algoritmo de Kosaraju.
-     * @return Un Set de objetos Usuario.
+    
      */
     public Set<Usuario> getTodosLosUsuarios() {
         return adjList.keySet();
@@ -99,34 +87,51 @@ public class Grafo {
     public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
-public boolean agregarRelaciones(String nombreOrigen, String nombreDestino) {
-    // 1. Verificar si los usuarios existen en el grafo
-    if (usuarios.containsKey(nombreOrigen) && usuarios.containsKey(nombreDestino)) {
-        
-        Usuario origen = usuarios.get(nombreOrigen);
-        Usuario destino = usuarios.get(nombreDestino);
-        
-        // 2. Asumimos que la clase Usuario tiene un método para agregar vecinos.
-        // Si tu clase Usuario tiene una lista/set de vecinos, la llamada sería algo así:
-        // origen.agregarVecino(destino);
-        
-        // Si tienes un método específico para agregar aristas, úsalo aquí.
-        // Por ejemplo, si tu arista se maneja solo en la lista de adyacencia del origen:
-        origen.getVecinos().add(destino); 
-        
-        return true;
-    }    
 
-// Si llegamos aquí, significa que la condición del IF no se cumplió.
-    return false; // Retorna FALSE si uno o ambos usuarios no existen.
+
+public Grafo obtenerGrafoTranspuesto() {
+    Grafo grafoTranspuesto = new Grafo();
+    
+    // 1. Agregar todos los usuarios al nuevo grafo
+    // (Asegúrate de tener el método getListaDeUsuarios())
+    for (Usuario u : this.getListaDeUsuarios()) {
+        grafoTranspuesto.agregarUsuario(u.getNombre());
+    }
+    
+    // 2. Recorrer todas las aristas originales y agregarlas invertidas
+    // (Asegúrate de tener el método getAdyacentes())
+    for (Usuario origen : this.getListaDeUsuarios()) {
+        for (Usuario destino : this.getAdyacentes(origen)) {
+            
+            // Arista original es (origen -> destino)
+            // Arista transpuesta es (destino -> origen)
+            grafoTranspuesto.agregarArista(destino.getNombre(), origen.getNombre());
+        }
+    }
+    
+    return grafoTranspuesto;
 }
 
-
-
-
+/**
+     * @return  */
+    public List<Usuario> getListaDeUsuarios() {
+        // Devolvemos los valores del mapa 'usuarios', que es la fuente "maestra"
+       
+        return new ArrayList<>(usuarios.values());
+    }
+    
+    
+    
+    /**
+     * Devuelve la lista de adyacentes (vecinos) de un usuario dado.
+     * @param u 
+     * @return  
+     */
+    public List<Usuario> getAdyacentes(Usuario u) {
+        
+        // devuelve una lista vacía para evitar errores.
+        
+        return adjList.getOrDefault(u, new LinkedList<>());
+    }
 }
-    // ¡RECUERDA!
-    // Aquí es donde deberás implementar la lógica para el Requerimiento B (Eliminar Usuario)
-    // y el Requerimiento C (Actualizar Repositorio, que requerirá un método para
-    // recorrer y generar el texto de salida).
-
+   //FALTA ELIMINAR Y ACTUALIZAR

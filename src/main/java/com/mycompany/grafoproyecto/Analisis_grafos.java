@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 public class Analisis_grafos {
     
     public static void main(String[] args) {
+        
         java.awt.EventQueue.invokeLater(() -> new Ventanamodificada().setVisible(true));}
     
     

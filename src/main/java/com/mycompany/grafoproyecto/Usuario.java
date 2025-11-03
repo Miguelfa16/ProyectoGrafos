@@ -14,13 +14,13 @@ import java.util.List;
  */public class Usuario {
     private final String nombre;
     
-    private final List<Usuario> vecinos; 
+    
 
     // Constructor
     public Usuario(String nombre) {
         this.nombre = nombre;
         
-        this.vecinos = new ArrayList<>(); 
+    
     }
 
 
@@ -47,8 +47,8 @@ import java.util.List;
     public String toString() {
         return nombre;
     }
-    
-    public List<Usuario> getVecinos() {
-        return vecinos;
-    }
+public String getNombre() {
+        return this.nombre;
+    }    
+   
 }
