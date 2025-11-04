@@ -120,7 +120,7 @@ public class Ventanamodificada extends javax.swing.JFrame {
     }
     private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
         Grafo GrafoCargado = ControladorGrafos.getGrafoActual(); 
-        if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().isEmpty()){ 
+        if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().esVacio()){ 
             JOptionPane.showMessageDialog(this,"No hay ningun grafo cargado para mostrar", "Grafo Vacio", JOptionPane.ERROR_MESSAGE);
         }else{ 
             VisualGrafo ventanaGraficaGrafo = new VisualGrafo(GrafoCargado); 
@@ -132,29 +132,30 @@ public class Ventanamodificada extends javax.swing.JFrame {
     String[] Opciones = {"Agregar Usuario", "Eliminar Usuario", "Cancelar"};
     int seleccionOpciones = JOptionPane.showOptionDialog(null, "Seleeccione la Accion a Relaizar", "Editar Grafo", JOptionPane.DEFAULT_OPTION, 
             JOptionPane.QUESTION_MESSAGE,null,Opciones, Opciones[0]);
-    if(seleccionOpciones == 1){ 
+    if(seleccionOpciones == 0){ 
         String NuevoUsuario = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario que desea agregar");
         if(NuevoUsuario.startsWith("@")){
             ControladorGrafos.getGrafoActual().agregarUsuario(NuevoUsuario);
             String[] OpcionRelaciones = {"Agregar Relacion", "Cancelar"};
             int seleccionOpcionesRelaciones = JOptionPane.showOptionDialog(null, "Con que usuarios se relaciona "+NuevoUsuario, "Relaciones Nuevo Usuario",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,OpcionRelaciones, OpcionRelaciones[0]);
-            if(seleccionOpcionesRelaciones == 1){ 
+            if(seleccionOpcionesRelaciones == 0){ 
             String NuevaRelacion = JOptionPane.showInputDialog(this, "Escriba el nombre del usuario con quien "+NuevoUsuario+"tiene relacion");
             ControladorGrafos.getGrafoActual().agregarArista(NuevoUsuario, NuevaRelacion);
         }
         }else{ 
             JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
         }
-    }else if (seleccionOpciones == 2){ 
+    }else if (seleccionOpciones == 1){ 
         String UsuarioEliminar = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario del usuario que desea eliminar");
         if(UsuarioEliminar.startsWith("@")){
+            ControladorGrafos.getGrafoActual().EliminarUsuario(UsuarioEliminar);
             
         }else{ 
             JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
         }
         
-    }else if (seleccionOpciones == 3 || seleccionOpciones == -1){
+    }else if (seleccionOpciones == 3 || seleccionOpciones == 2){
         JOptionPane.showMessageDialog(null, "Accion Cancelada ");
     }
     }//GEN-LAST:event_EditarGrafoActionPerformed

@@ -10,10 +10,9 @@ package com.mycompany.grafoproyecto;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.logging.Logger;
 import java.io.IOException;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
+
 
 /**
 
@@ -24,35 +23,27 @@ public class ControladorGrafos {
     
     private static Grafo grafoActual = null; 
     
-    // Logger para registrar errores internos
-    private static final Logger LOGGER = Logger.getLogger(ControladorGrafos.class.getName());
-
     /**
      * Carga el archivo de texto por defecto al iniciar el programa 
-     * (Requerimiento C - Carga Inicial).
+     *
      * El archivo se busca con el nombre "grafo_inicial.txt" en la raíz del proyecto.
      */
-    public static void GrafoInicial() {
-    File archivoInicial = new File("grafo_inicial.txt");
-
-    if (archivoInicial.exists() && archivoInicial.canRead()) {
-        try {
-            CargarGrafo(archivoInicial);
-        } catch (IOException e) {
-            LOGGER.severe("Error al leer el archivo inicial: " + e.getMessage());
-        } 
-    } 
-    else { 
-        LOGGER.severe("Error: No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
+public static void GrafoInicial() {
+        File archivoInicial = new File("grafo_inicial.txt");
+        if (archivoInicial.exists() && archivoInicial.canRead()) {
+            try {
+                CargarGrafo(archivoInicial);
+            } catch (IOException e) {
+                System.err.println("Error al leer el archivo inicial: " + e.getMessage());
+            } 
+        } else { 
+            System.err.println("Error: No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
+        }
     }
-}
 
     
     /**
      * Carga la información de usuarios y relaciones desde un archivo de texto 
-     * para construir el objeto Grafo (Requerimiento A).
-     * @param archivo El objeto File seleccionado por JFileChooser.
-     * @throws java.io.IOException
      */
     public static void CargarGrafo(File archivo) throws IOException  {
         grafoActual = new Grafo(); 
@@ -98,6 +89,5 @@ public class ControladorGrafos {
 public static Grafo getGrafoActual() {
     return grafoActual;
 }
-
-
 }
+

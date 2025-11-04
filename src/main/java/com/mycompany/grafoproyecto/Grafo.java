@@ -6,23 +6,18 @@ package com.mycompany.grafoproyecto;
  */
 
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 public class Grafo {
-    private final Map<String, Usuario> usuarios; 
-    private final Map<Usuario, List<Usuario>> adjList; 
+    private final Mapa<String, Usuario> usuarios; 
+    private final Mapa<Usuario, Lista<Usuario>> adjList; 
     /**
-     * Constructor de la clase Grafo.
+    
      * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia.
      */
     public Grafo() {
-        this.usuarios = new HashMap<>();
-        this.adjList = new HashMap<>();
+        this.usuarios = new Mapa<>();
+        this.adjList = new Mapa<>();
     }
 
     /**
@@ -35,8 +30,7 @@ public class Grafo {
         if (!usuarios.containsKey(nombre)) {
             Usuario nuevoUsuario = new Usuario(nombre);
             usuarios.put(nombre, nuevoUsuario);
-            // Cada usuario debe tener su propia lista de vecinos (destinos)
-            adjList.put(nuevoUsuario, new LinkedList<>()); 
+            adjList.put(nuevoUsuario, new Lista<>()); 
         }
     }
 
@@ -49,34 +43,13 @@ public class Grafo {
     public void agregarArista(String origenNombre, String destinoNombre) {
         Usuario origen = usuarios.get(origenNombre);
         Usuario destino = usuarios.get(destinoNombre);
-
-        // Verificación esencial para la tolerancia a fallos: ¿Existen ambos usuarios?
         if (origen != null && destino != null) {
-            // Se agrega 'destino' a la lista de adyacencia de 'origen'.
-            adjList.get(origen).add(destino);
+            adjList.get(origen).Agregar(destino);
         } else {
-            // Esto se manejaría con un JOptionPane en el Controlador para informar al usuario.
             System.err.println("Advertencia de Carga: Relación inválida con usuarios no existentes.");
         }
-    }
-    /**
-     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.S
-     * Es crucial para iniciar los recorridos de búsqueda (DFS) en el algoritmo de Kosaraju.
-     * @return Un Set de objetos Usuario.
-     */
-    public Set<Usuario> getTodosLosUsuarios() {
-        return adjList.keySet();
-    }
-    
-    /**
-     * Devuelve la lista de usuarios que son seguidos por el usuario dado (los vecinos).
-     * Representa las aristas salientes del nodo.
-     * @param usuario El objeto Usuario del que se buscan los vecinos.
-     * @return Una List de objetos Usuario que son seguidos.
-     */
-    public List<Usuario> getVecinos(Usuario usuario) {
-        return adjList.getOrDefault(usuario, new LinkedList<>());
-    }
+    }  
+
     
     /**
      * Permite obtener un objeto Usuario específico a partir de su nombre.
@@ -84,8 +57,40 @@ public class Grafo {
      * @param nombre El String con el nombre del usuario.
      * @return El objeto Usuario si existe, o null si no se encuentra.
      */
-    public Usuario getUsuario(String nombre) {
+ 
+   public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
+   
+    public Lista<Usuario> getListaDeUsuarios() {
+        return usuarios.values();
+    }
+    
+    public Lista<Usuario> getTodosLosUsuarios() {
+        return adjList.keySet(); 
 }
-   //FALTA ELIMINAR Y ACTUALIZAR
+    public Lista<Usuario> getVecinos(Usuario usuario) {
+    Lista<Usuario> vecinos = adjList.get(usuario); 
+    return (vecinos != null) ? vecinos : new Lista<>(); 
+}
+    
+    public boolean EliminarUsuario(String nombre){ 
+        Usuario UsuarioEliminar = getUsuario(nombre); 
+        if (UsuarioEliminar == null){ 
+            return false; 
+        }
+        adjList.remove(UsuarioEliminar);
+        Lista<Usuario> Claves = adjList.keySet();
+       for (int i = 0; i < Claves.Tamaño(); i++) {
+            Usuario origen = Claves.ObtenerPorIndice(i);
+            Lista<Usuario> vecinos = adjList.get(origen);
+            if (vecinos != null) {
+                vecinos.Remover(UsuarioEliminar);
+            }
+        }
+        usuarios.remove(nombre);
+        return true; 
+    }
+    
+}
+  
