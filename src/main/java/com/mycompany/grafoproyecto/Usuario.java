@@ -4,9 +4,6 @@ package com.mycompany.grafoproyecto;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-import java.util.ArrayList; // 🚨 ¡Necesitas esta importación! 🚨
-import java.util.List;
-
 
 /**
  *

@@ -7,197 +7,217 @@ package com.mycompany.grafoproyecto;
 
 
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.logging.Logger;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import javax.swing.JOptionPane;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.PrintWriter;
 
-/**
 
- * @author Samj 
- */
 public class ControladorGrafos {
 
-    
     private static Grafo grafoActual = null; 
-    
-    // Logger para registrar errores internos
-    private static final Logger LOGGER = Logger.getLogger(ControladorGrafos.class.getName());
-
-    /**
-     * Carga el archivo de texto por defecto al iniciar el programa 
-     *
-     * El archivo se busca con el nombre "grafo_inicial.txt" en la raíz del proyecto.
-     */
-    public static void GrafoInicial() {
-    File archivoInicial = new File("grafo_inicial.txt");
-
-    if (archivoInicial.exists() && archivoInicial.canRead()) {
-        try {
-            CargarGrafo(archivoInicial);
-        } catch (IOException e) {
-            LOGGER.severe("Error al leer el archivo inicial: " + e.getMessage());
-        } 
-    } 
-    else { 
-        LOGGER.severe("Error: No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
-    }
-}
-
-    
-    /**
-     * Carga la información de usuarios y relaciones desde un archivo de texto 
+      
    
-     
-     
-     */
-    public static void CargarGrafo(File archivo) throws IOException  {
+    public static void GrafoInicial() throws IOException {
+        File archivoInicial = new File("grafo_inicial.txt");
+
+        if (archivoInicial.exists() && archivoInicial.canRead()) {
+          
+            CargarGrafo(archivoInicial);
+        } else { 
+           
+            throw new IOException("No se pudo encontrar el archivo inicial 'grafo_inicial.txt'.");
+        }
+    }
+
+   
+    public static void CargarGrafo(File archivo) throws IOException {
         grafoActual = new Grafo(); 
-        String modo = "NONE";        
+        String modo = "NONE"; 
+        
+        
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty()){
-                    continue;
-                } 
+                
+                if (line.isEmpty()) {
+                    continue; 
+                }
                 if (line.equals("usuarios")) {
                     modo = "USUARIOS";
                     continue;
                 } else if (line.equals("relaciones")) {
                     modo = "RELACIONES";
                     continue;
-                }                
-                // Construcción del Grafo
-                if (modo.equals("USUARIOS")) {
-                    grafoActual.agregarUsuario(line);                    
-               } else if (modo.equals("RELACIONES")) {                               
-                String[] partes = line.split(", ");                                
-                if (partes.length == 2) {                                        
-                    String origen = partes[0].trim();
-                    String destino = partes[1].trim();                   
-                    if (!origen.isEmpty() && !destino.isEmpty()) {
-                        grafoActual.agregarArista(origen, destino);
-                    }
                 } 
                 
+                if (modo.equals("USUARIOS")) {
+                    grafoActual.agregarUsuario(line);
+                    
+                } else if (modo.equals("RELACIONES")) {
+                    String[] partes = line.split("\\s*,\\s*"); // Separa por "," con o sin espacios
+                    if (partes.length == 2) { 
+                        String origen = partes[0].trim();
+                        String destino = partes[1].trim();
+                        if (!origen.isEmpty() && !destino.isEmpty()) {
+                            grafoActual.agregarArista(origen, destino);
+                        }
+                    } 
+                } 
             } 
-            
-            
         } 
+        
     } 
-} 
 
-/**
- * Permite obtener la instancia actual del grafo cargado en memoria.
- * @return El objeto Grafo Dirigido o null si no se ha cargado nada.
- */
-public static Grafo getGrafoActual() {
-    return grafoActual;
-}
+    
+    public static Grafo getGrafoActual() {
+        return grafoActual;
+    }
 
-public static List<List<Usuario>> encontrarComponentes() {
-        if (grafoActual == null || grafoActual.getListaDeUsuarios().isEmpty()) {
-            LOGGER.warning("No hay grafo cargado para analizar.");
-            return new ArrayList<>(); // Devuelve lista vacía
+  
+
+   
+    public static void guardarGrafo(File archivo) throws IOException {
+        if (grafoActual == null) {
+          
+            throw new IOException("No hay ningún grafo en memoria para guardar.");
         }
 
-        // 
+        
+        try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
+            
+            pw.println("usuarios");
+          
+            Lista<Usuario> usuarios = grafoActual.getListaDeUsuarios();
+            for (int i = 0; i < usuarios.Tamaño(); i++) {
+                pw.println(usuarios.ObtenerPorIndice(i).getNombre());
+            }
 
-        // --- PASO 1: Primer DFS (sobre G) para llenar la Pila ---
-        // Se usa la Pila<T> que implementaste.
+            pw.println("relaciones");
+          
+            Lista<String> relaciones = grafoActual.transformarrelaciones();
+            for (int i = 0; i < relaciones.Tamaño(); i++) {
+                pw.println(relaciones.ObtenerPorIndice(i));
+            }
+        }
+    
+    }
+
+    
+
+    public static void agregarUsuario(String nombreUsuario) {
+        if (grafoActual != null) {
+            grafoActual.agregarUsuario(nombreUsuario);
+        }
+    }
+    
+    public static void eliminarUsuario(String nombreUsuario) {
+        if (grafoActual != null) {
+       
+            grafoActual.EliminarUsuario(nombreUsuario);
+        }
+    }
+    
+    public static void agregarRelacion(String origen, String destino) {
+        if (grafoActual != null) {
+            grafoActual.agregarArista(origen, destino);
+        }
+    }
+    
+    public static void eliminarRelacion(String origen, String destino) {
+        if (grafoActual != null) {
+  
+            grafoActual.eliminarArista(origen, destino); 
+        }
+    }
+
+
+    public static Lista<Lista<Usuario>> encontrarComponentes() throws Exception {
+        if (grafoActual == null || grafoActual.getListaDeUsuarios().esVacio()) {
+         
+            throw new Exception("No hay grafo cargado para analizar.");
+        }
+
+      
         Pila<Usuario> pila = new Pila<>();
+        Mapa<Usuario, Boolean> visitados = new Mapa<>();
+        Lista<Usuario> usuarios = grafoActual.getListaDeUsuarios();
         
-        // El HashMap 'visitados' rastrea qué nodos ya hemos procesado
-        HashMap<Usuario, Boolean> visitados = new HashMap<>();
-        
-        // Inicializa todos los usuarios como "no visitados"
-        for (Usuario u : grafoActual.getListaDeUsuarios()) { 
-            visitados.put(u, false);
+       
+        for (int i = 0; i < usuarios.Tamaño(); i++) {
+            visitados.put(usuarios.ObtenerPorIndice(i), false);
         }
 
-        // Ejecuta DFS por cada usuario que no haya sido visitado
-        for (Usuario u : grafoActual.getListaDeUsuarios()) {
-            if (!visitados.get(u)) {
+  
+        for (int i = 0; i < usuarios.Tamaño(); i++) {
+            Usuario u = usuarios.ObtenerPorIndice(i);
+            
+            if (!visitados.get(u)) { 
                 dfsPaso1(u, visitados, pila);
             }
         }
 
-        // --- PASO 2: Obtener el grafo transpuesto (G^T) ---
-        // (Debes implementar este método en Grafo.java)
-        Grafo grafoTranspuesto = grafoActual.obtenerGrafoTranspuesto(); 
-
-        // --- PASO 3: Segundo DFS (sobre G^T) usando la Pila ---
-        List<List<Usuario>> componentes = new ArrayList<>();
+       
+        Grafo grafoTranspuesto = grafoActual.obtenerGrafoTranspuesto();
         
-        // Reinicia el mapa 'visitados' para el segundo recorrido
-        visitados.clear();
-        for (Usuario u : grafoTranspuesto.getListaDeUsuarios()) {
-            visitados.put(u, false);
+    
+        Lista<Lista<Usuario>> componentes = new Lista<>();
+        
+       
+        visitados = new Mapa<>(); 
+        Lista<Usuario> usuariosTranspuestos = grafoTranspuesto.getListaDeUsuarios();
+        for (int i = 0; i < usuariosTranspuestos.Tamaño(); i++) {
+            visitados.put(usuariosTranspuestos.ObtenerPorIndice(i), false);
         }
 
-        // Mientras la pila no esté vacía, saca un usuario
         while (!pila.isEmpty()) {
             Usuario u = pila.pop();
-            
-            // Buscamos el nodo 'u' pero en el grafo transpuesto
             Usuario uTranspuesto = grafoTranspuesto.getUsuario(u.getNombre()); 
             
-            // Si existe y no ha sido visitado, encontramos un nuevo CFC
+          
             if (uTranspuesto != null && !visitados.get(uTranspuesto)) {
-                List<Usuario> nuevoComponente = new ArrayList<>();
-                // Inicia el DFS (paso 2) para encontrar todos los miembros de este CFC
+                Lista<Usuario> nuevoComponente = new Lista<>();
                 dfsPaso2(uTranspuesto, visitados, nuevoComponente, grafoTranspuesto);
-                componentes.add(nuevoComponente);
+                componentes.Agregar(nuevoComponente); 
             }
         }
-        
-        LOGGER.info("Análisis de Kosaraju completado. Encontrados " + componentes.size() + " CFCs.");
+      
         return componentes;
     }
 
-    /**
-     * Helper DFS para el Paso 1 de Kosaraju (Llena la pila).
-     * Recorre el grafo G.
-     */
-    private static void dfsPaso1(Usuario u, HashMap<Usuario, Boolean> visitados, Pila<Usuario> pila) {
-        // Marca el nodo actual como visitado
+ 
+    private static void dfsPaso1(Usuario u, Mapa<Usuario, Boolean> visitados, Pila<Usuario> pila) {
         visitados.put(u, true);
         
-        // Recorre todos sus vecinos (a los que sigue)
-        for (Usuario v : grafoActual.getAdyacentes(u)) { 
+      
+        Lista<Usuario> vecinos = grafoActual.getVecinos(u); 
+        for (int i = 0; i < vecinos.Tamaño(); i++) {
+            Usuario v = vecinos.ObtenerPorIndice(i);
             if (!visitados.get(v)) {
                 dfsPaso1(v, visitados, pila);
             }
         }
-        
-        // Cuando el nodo termina (no tiene más vecinos por visitar), 
-        // se añade a la pila.
         pila.push(u);
     }
 
-    /**
-     * Helper DFS para el Paso 2 de Kosaraju (Construye los componentes).
-     * Recorre el grafo Transpuesto G^T.
-     */
-    private static void dfsPaso2(Usuario u, HashMap<Usuario, Boolean> visitados, List<Usuario> componente, Grafo transpuesto) {
-        // Marca el nodo actual como visitado
-        visitados.put(u, true);
-        // Lo añade a la lista del componente actual
-        componente.add(u); 
 
-        // Recorre sus vecinos (esta vez en el grafo transpuesto)
-        for (Usuario v : transpuesto.getAdyacentes(u)) {
+    
+    private static void dfsPaso2(Usuario u, Mapa<Usuario, Boolean> visitados, Lista<Usuario> componente, Grafo transpuesto) {
+        visitados.put(u, true);
+        componente.Agregar(u); 
+
+    
+        Lista<Usuario> vecinos = transpuesto.getVecinos(u); 
+        for (int i = 0; i < vecinos.Tamaño(); i++) {
+            Usuario v = vecinos.ObtenerPorIndice(i);
             if (!visitados.get(v)) {
                 dfsPaso2(v, visitados, componente, transpuesto);
             }
         }
     }
 }
-

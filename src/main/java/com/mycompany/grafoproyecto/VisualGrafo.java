@@ -7,7 +7,6 @@ package com.mycompany.grafoproyecto;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
-//import org.graphstream.ui.view.ViewPanel;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import java.awt.BorderLayout;
@@ -20,32 +19,44 @@ import java.awt.BorderLayout;
 public class VisualGrafo extends javax.swing.JFrame {
       
     private Grafo grafo;
-
+    private Graph miGrafoDeStream; 
+    private Lista<Lista<Usuario>> componentesEncontrados = null; 
     
     public VisualGrafo(Grafo grafo) {
         this.grafo = grafo; 
         initComponents();
         IniciarVisualizacion(); 
     }
-    
-    // lógica grafico
+    public VisualGrafo(Grafo grafo, Lista<Lista<Usuario>> componentes) {
+    this.grafo = grafo;
+    this.componentesEncontrados = componentes; 
+    initComponents();     
+    IniciarVisualizacion(); 
+    aplicarColoresComponentes(); 
+}
+
     private void IniciarVisualizacion() {
     System.setProperty("org.graphstream.ui", "swing");
-    Graph Grafo = new SingleGraph("Mi Grafo");  
-    for (Usuario u : this.grafo.getTodosLosUsuarios()) { 
+    this.miGrafoDeStream = new SingleGraph("Mi Grafo");
+    Lista<Usuario> todosLosUsuarios = this.grafo.getTodosLosUsuarios();
+    for (int i = 0; i < todosLosUsuarios.Tamaño(); i++) { 
+       Usuario u = todosLosUsuarios.ObtenerPorIndice(i);
        String nombreUsuario = u.toString();
-       Grafo.addNode(nombreUsuario);
-       Grafo.getNode(nombreUsuario).setAttribute("ui.label", nombreUsuario);
+      this.miGrafoDeStream.addNode(nombreUsuario);
+       this.miGrafoDeStream.getNode(nombreUsuario).setAttribute("ui.label", nombreUsuario);
     } 
-    for (Usuario origen : this.grafo.getTodosLosUsuarios()) { 
-        String nombreOrigen = origen.toString();       
-        for (Usuario destino : this.grafo.getVecinos(origen)) {  
+    for (int i = 0; i < todosLosUsuarios.Tamaño(); i++) { 
+        Usuario origen = todosLosUsuarios.ObtenerPorIndice(i);
+        String nombreOrigen = origen.toString();  
+        Lista<Usuario> vecinos = this.grafo.getVecinos(origen);
+        for (int j = 0; j < vecinos.Tamaño(); j++) {  
+            Usuario destino = vecinos.ObtenerPorIndice(j);
             String nombreDestino = destino.toString();
             String idArista = nombreOrigen + "->" + nombreDestino;
-            Grafo.addEdge(idArista, nombreOrigen, nombreDestino, true);                
+            this.miGrafoDeStream.addEdge(idArista, nombreOrigen, nombreDestino, true);                
         }
     }    
-    SwingViewer viewer = new SwingViewer(Grafo, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+    SwingViewer viewer = new SwingViewer(this.miGrafoDeStream, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
     viewer.enableAutoLayout();
     org.graphstream.ui.swing_viewer.ViewPanel viewPanel = (org.graphstream.ui.swing_viewer.ViewPanel) viewer.addDefaultView(false);
     this.getContentPane().setLayout(new BorderLayout());
@@ -57,7 +68,30 @@ public class VisualGrafo extends javax.swing.JFrame {
    
     
     }
-
+    
+    private void aplicarColoresComponentes() {
+        
+     
+        if (this.componentesEncontrados == null || this.miGrafoDeStream == null) {
+            return; 
+        }
+        
+        String[] colores = { "red", "green", "blue", "orange", "cyan", "magenta" };
+        
+        for (int i = 0; i < this.componentesEncontrados.Tamaño(); i++) {
+            String colorActual = colores[i % colores.length]; 
+            Lista<Usuario> componente = this.componentesEncontrados.ObtenerPorIndice(i);
+            
+            for (int j = 0; j < componente.Tamaño(); j++) {
+                Usuario u = componente.ObtenerPorIndice(j);
+                // Busca el nodo en la "pizarra" global
+                org.graphstream.graph.Node nodo = miGrafoDeStream.getNode(u.toString());
+                if (nodo != null) {
+                    nodo.setAttribute("ui.style", "fill-color: " + colorActual + ";");
+                }
+            }
+        }
+    }
     
 
     /**

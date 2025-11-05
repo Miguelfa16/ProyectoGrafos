@@ -4,7 +4,7 @@
 
 package com.mycompany.grafoproyecto;
 
-import javax.swing.SwingUtilities;
+
 /**
  *hola
  * @author Miguel Figueroa , Samir Nassar 

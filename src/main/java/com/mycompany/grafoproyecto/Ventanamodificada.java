@@ -18,11 +18,26 @@ public class Ventanamodificada extends javax.swing.JFrame {
     /**
      * Creates new form Ventana
      */
-    public Ventanamodificada() {
-        initComponents();
-        ControladorGrafos.GrafoInicial();
+    public Ventanamodificada() { // <-- Llave de APERTURA del constructor
+    
+        initComponents(); // 1. Construye la ventana
+    
+        // 2. Intenta cargar los datos
+        try {
+            ControladorGrafos.GrafoInicial();
+    
+        } catch (java.io.IOException e) {
+            // 3. Si falla, MUESTRA el error (ahora "this" sí funciona)
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error fatal al cargar el archivo inicial: " + e.getMessage(), 
+                "Error de Carga", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+        
+        // 4. Centra la ventana
         this.setLocationRelativeTo(null);
-    }
+        
+    } // <-- Llave de CIERRE del constru
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -36,6 +51,7 @@ public class Ventanamodificada extends javax.swing.JFrame {
         BotonCargarArchivo = new javax.swing.JButton();
         MostrarGrafo = new javax.swing.JButton();
         EditarGrafo = new javax.swing.JButton();
+        Analizarcomponentes = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,28 +76,37 @@ public class Ventanamodificada extends javax.swing.JFrame {
             }
         });
 
+        Analizarcomponentes.setText(" Analizar componentes");
+        Analizarcomponentes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AnalizarcomponentesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(BotonCargarArchivo)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(EditarGrafo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(MostrarGrafo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(248, Short.MAX_VALUE))
+                    .addComponent(EditarGrafo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(MostrarGrafo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Analizarcomponentes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(238, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(182, Short.MAX_VALUE)
+                .addContainerGap(151, Short.MAX_VALUE)
                 .addComponent(BotonCargarArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(MostrarGrafo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(8, 8, 8)
                 .addComponent(EditarGrafo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Analizarcomponentes)
                 .addGap(17, 17, 17))
         );
 
@@ -120,7 +145,7 @@ public class Ventanamodificada extends javax.swing.JFrame {
     }
     private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
         Grafo GrafoCargado = ControladorGrafos.getGrafoActual(); 
-        if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().isEmpty()){ 
+        if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().esVacio()){ 
             JOptionPane.showMessageDialog(this,"No hay ningun grafo cargado para mostrar", "Grafo Vacio", JOptionPane.ERROR_MESSAGE);
         }else{ 
             VisualGrafo ventanaGraficaGrafo = new VisualGrafo(GrafoCargado); 
@@ -132,41 +157,73 @@ public class Ventanamodificada extends javax.swing.JFrame {
     String[] Opciones = {"Agregar Usuario", "Eliminar Usuario", "Cancelar"};
     int seleccionOpciones = JOptionPane.showOptionDialog(null, "Seleeccione la Accion a Relaizar", "Editar Grafo", JOptionPane.DEFAULT_OPTION, 
             JOptionPane.QUESTION_MESSAGE,null,Opciones, Opciones[0]);
-    if(seleccionOpciones == 1){ 
+    if(seleccionOpciones == 0){ 
         String NuevoUsuario = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario que desea agregar");
         if(NuevoUsuario.startsWith("@")){
             ControladorGrafos.getGrafoActual().agregarUsuario(NuevoUsuario);
             String[] OpcionRelaciones = {"Agregar Relacion", "Cancelar"};
             int seleccionOpcionesRelaciones = JOptionPane.showOptionDialog(null, "Con que usuarios se relaciona "+NuevoUsuario, "Relaciones Nuevo Usuario",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,OpcionRelaciones, OpcionRelaciones[0]);
-            if(seleccionOpcionesRelaciones == 1){ 
+            if(seleccionOpcionesRelaciones == 0){ 
             String NuevaRelacion = JOptionPane.showInputDialog(this, "Escriba el nombre del usuario con quien "+NuevoUsuario+"tiene relacion");
             ControladorGrafos.getGrafoActual().agregarArista(NuevoUsuario, NuevaRelacion);
         }
         }else{ 
             JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
         }
-    }else if (seleccionOpciones == 2){ 
+    }else if (seleccionOpciones == 1){ 
         String UsuarioEliminar = JOptionPane.showInputDialog(this, "Escriba el nombre de usuario del usuario que desea eliminar");
         if(UsuarioEliminar.startsWith("@")){
+            ControladorGrafos.getGrafoActual().EliminarUsuario(UsuarioEliminar);
             
         }else{ 
             JOptionPane.showMessageDialog(this, "El nombre de usuario debe contener '@' al inicio", "Usuario no valido", JOptionPane.WARNING_MESSAGE);
         }
         
-    }else if (seleccionOpciones == 3 || seleccionOpciones == -1){
+    }else if (seleccionOpciones == 3 || seleccionOpciones == 2){
         JOptionPane.showMessageDialog(null, "Accion Cancelada ");
     }
     }//GEN-LAST:event_EditarGrafoActionPerformed
+
+    private void AnalizarcomponentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnalizarcomponentesActionPerformed
+try {
+        
+       
+        Lista<Lista<Usuario>> componentes = ControladorGrafos.encontrarComponentes();
+        
+
+        Grafo grafoActual = ControladorGrafos.getGrafoActual();
+        
+      
+        VisualGrafo ventanaColoreada = new VisualGrafo(grafoActual, componentes);
+        ventanaColoreada.setVisible(true); 
+
+      
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Análisis completado. Se encontraron " + componentes.Tamaño() + " componentes fuertemente conectados.", 
+            "Análisis Exitoso", 
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (Exception e) {
+
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Error al analizar el grafo: " + e.getMessage(), 
+            "Error de Análisis", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    
+    }//GEN-LAST:event_AnalizarcomponentesActionPerformed
+    }
 
 
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Analizarcomponentes;
     private javax.swing.JButton BotonCargarArchivo;
     private javax.swing.JButton EditarGrafo;
     private javax.swing.JButton MostrarGrafo;
     // End of variables declaration//GEN-END:variables
 
 }
+

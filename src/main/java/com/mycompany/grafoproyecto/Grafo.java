@@ -6,23 +6,18 @@ package com.mycompany.grafoproyecto;
  */
 
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
+
 
 public class Grafo {
-    private final Map<String, Usuario> usuarios; 
-    private final Map<Usuario, List<Usuario>> adjList; 
+    private final Mapa<String, Usuario> usuarios; 
+    private final Mapa<Usuario, Lista<Usuario>> adjList; 
     /**
     
      * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia.
      */
     public Grafo() {
-        this.usuarios = new HashMap<>();
-        this.adjList = new HashMap<>();
+        this.usuarios = new Mapa<>();
+        this.adjList = new Mapa<>();
     }
 
     /**
@@ -35,8 +30,7 @@ public class Grafo {
         if (!usuarios.containsKey(nombre)) {
             Usuario nuevoUsuario = new Usuario(nombre);
             usuarios.put(nombre, nuevoUsuario);
-            // Cada usuario debe tener su propia lista de vecinos (destinos)
-            adjList.put(nuevoUsuario, new LinkedList<>()); 
+            adjList.put(nuevoUsuario, new Lista<>()); 
         }
     }
 
@@ -49,34 +43,20 @@ public class Grafo {
     public void agregarArista(String origenNombre, String destinoNombre) {
         Usuario origen = usuarios.get(origenNombre);
         Usuario destino = usuarios.get(destinoNombre);
-
-        // Verificación esencial para la tolerancia a fallos: ¿Existen ambos usuarios?
         if (origen != null && destino != null) {
-            // Se agrega 'destino' a la lista de adyacencia de 'origen'.
-            adjList.get(origen).add(destino);
+            // Obtenemos la lista de vecinos
+            Lista<Usuario> vecinos = adjList.get(origen);
+            
+           
+            // Solo la agregamos si NO la contiene ya
+            if (!vecinos.ContieneA(destino)) {
+                vecinos.Agregar(destino);
+            }
         } else {
-            // Esto se manejaría con un JOptionPane en el Controlador para informar al usuario.
             System.err.println("Advertencia de Carga: Relación inválida con usuarios no existentes.");
         }
     }
-    /**
-     * Devuelve el conjunto de todos los usuarios (nodos) presentes en el grafo.S
-     * Es crucial para iniciar los recorridos de búsqueda (DFS) en el algoritmo de Kosaraju.
-    
-     */
-    public Set<Usuario> getTodosLosUsuarios() {
-        return adjList.keySet();
-    }
-    
-    /**
-     * Devuelve la lista de usuarios que son seguidos por el usuario dado (los vecinos).
-     * Representa las aristas salientes del nodo.
-     * @param usuario El objeto Usuario del que se buscan los vecinos.
-     * @return Una List de objetos Usuario que son seguidos.
-     */
-    public List<Usuario> getVecinos(Usuario usuario) {
-        return adjList.getOrDefault(usuario, new LinkedList<>());
-    }
+
     
     /**
      * Permite obtener un objeto Usuario específico a partir de su nombre.
@@ -84,54 +64,113 @@ public class Grafo {
      * @param nombre El String con el nombre del usuario.
      * @return El objeto Usuario si existe, o null si no se encuentra.
      */
-    public Usuario getUsuario(String nombre) {
+ 
+   public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
-
-
-public Grafo obtenerGrafoTranspuesto() {
-    Grafo grafoTranspuesto = new Grafo();
-    
-    // 1. Agregar todos los usuarios al nuevo grafo
-    // (Asegúrate de tener el método getListaDeUsuarios())
-    for (Usuario u : this.getListaDeUsuarios()) {
-        grafoTranspuesto.agregarUsuario(u.getNombre());
+   
+    public Lista<Usuario> getListaDeUsuarios() {
+        return usuarios.values();
     }
     
-    // 2. Recorrer todas las aristas originales y agregarlas invertidas
-    // (Asegúrate de tener el método getAdyacentes())
-    for (Usuario origen : this.getListaDeUsuarios()) {
-        for (Usuario destino : this.getAdyacentes(origen)) {
+    public Lista<Usuario> getTodosLosUsuarios() {
+        return adjList.keySet(); 
+}
+    public Lista<Usuario> getVecinos(Usuario usuario) {
+    Lista<Usuario> vecinos = adjList.get(usuario); 
+    return (vecinos != null) ? vecinos : new Lista<>(); 
+}
+    
+    public boolean EliminarUsuario(String nombre){ 
+        Usuario UsuarioEliminar = getUsuario(nombre); 
+        if (UsuarioEliminar == null){ 
+            return false; 
+        }
+        adjList.remove(UsuarioEliminar);
+        Lista<Usuario> Claves = adjList.keySet();
+       for (int i = 0; i < Claves.Tamaño(); i++) {
+            Usuario origen = Claves.ObtenerPorIndice(i);
+            Lista<Usuario> vecinos = adjList.get(origen);
+            if (vecinos != null) {
+                vecinos.Remover(UsuarioEliminar);
+            }
+        }
+        usuarios.remove(nombre);
+        return true; 
+    }
+    
+    public void eliminarArista(String origenNombre, String destinoNombre) {
+        Usuario origen = getUsuario(origenNombre);
+        Usuario destino = getUsuario(destinoNombre);
+        
+        // Si ambos usuarios existen
+        if (origen != null && destino != null) {
+            // 1. Obtiene la lista de vecinos del origen
+            Lista<Usuario> vecinosDelOrigen = adjList.get(origen);
             
-            // Arista original es (origen -> destino)
-            // Arista transpuesta es (destino -> origen)
-            grafoTranspuesto.agregarArista(destino.getNombre(), origen.getNombre());
+            // 2. Si la lista existe, elimina al destino de esa lista
+            if (vecinosDelOrigen != null) {
+                // Usa tu método Remover()
+                vecinosDelOrigen.Remover(destino); 
+            }
         }
     }
     
-    return grafoTranspuesto;
-}
-
-/**
-     * @return  */
-    public List<Usuario> getListaDeUsuarios() {
-        // Devolvemos los valores del mapa 'usuarios', que es la fuente "maestra"
-       
-        return new ArrayList<>(usuarios.values());
-    }
-    
-    
-    
     /**
-     * Devuelve la lista de adyacentes (vecinos) de un usuario dado.
-     * @param u 
-     * @return  
+     * Crea y devuelve un NUEVO objeto Grafo que es el transpuesto del actual.Recorre todas las aristas (origen -> destino) y las agrega como
+ (destino -> origen) en el nuevo grafo.
+     * * @return Un objeto Grafo completamente nuevo que es el transpuesto.
+     * @return 
      */
-    public List<Usuario> getAdyacentes(Usuario u) {
+    public Grafo obtenerGrafoTranspuesto() {
+        Grafo grafoTranspuesto = new Grafo();
         
-        // devuelve una lista vacía para evitar errores.
+        // 1. Obtenemos la lista de todos los usuarios
+        Lista<Usuario> listaDeUsuarios = this.getListaDeUsuarios();
         
-        return adjList.getOrDefault(u, new LinkedList<>());
+        // 2. Agregamos todos los usuarios al nuevo grafo (para que existan)
+        for (int i = 0; i < listaDeUsuarios.Tamaño(); i++) {
+            grafoTranspuesto.agregarUsuario(listaDeUsuarios.ObtenerPorIndice(i).getNombre());
+        }
+        
+        // 3. Recorremos todas las aristas originales y agregamos las invertidas
+        for (int i = 0; i < listaDeUsuarios.Tamaño(); i++) {
+            Usuario origen = listaDeUsuarios.ObtenerPorIndice(i);
+            
+            // Usamos tu método getVecinos()
+            Lista<Usuario> vecinos = this.getVecinos(origen);
+            
+            for (int j = 0; j < vecinos.Tamaño(); j++) {
+                Usuario destino = vecinos.ObtenerPorIndice(j);
+                
+                // ¡LA MAGIA! Agregamos la arista invertida
+                // (destino.getNombre() -> origen.getNombre())
+                grafoTranspuesto.agregarArista(destino.getNombre(), origen.getNombre());
+            }
+        }
+        return grafoTranspuesto;
     }
+    
+//convierte las relaciones en una lista para escribirlo en el txt en controlador grafos.   
+    public Lista<String> transformarrelaciones() {
+        Lista<String> relaciones = new Lista<>();
+        
+        // Usamos adjList.keySet() para obtener solo los usuarios
+        // que SÍ siguen a alguien (los orígenes de las aristas).
+        Lista<Usuario> listaOrigenes = adjList.keySet(); 
+        
+        for (int i = 0; i < listaOrigenes.Tamaño(); i++) {
+            Usuario origen = listaOrigenes.ObtenerPorIndice(i);
+            Lista<Usuario> listaDestinos = adjList.get(origen);
+            
+            for (int j = 0; j < listaDestinos.Tamaño(); j++) {
+                Usuario destino = listaDestinos.ObtenerPorIndice(j);
+                // Formato: @pepe, @maria
+                relaciones.Agregar(origen.getNombre() + ", " + destino.getNombre());
+            }
+        }
+        return relaciones;
+    }
+    
 }
-   //FALTA ELIMINAR Y ACTUALIZAR
+  
