@@ -11,6 +11,12 @@ package com.mycompany.grafoproyecto;
  */
 public class Analisis_grafos {
     
-    public static void main(String[] args) {      
-        java.awt.EventQueue.invokeLater(() -> new Ventanamodificada().setVisible(true));}    
+    public static void main(String[] args) {
+        
+        java.awt.EventQueue.invokeLater(() -> new Ventanamodificada().setVisible(true));}
+    
+    
+    
+    
+    
 }

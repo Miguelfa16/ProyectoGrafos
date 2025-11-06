@@ -5,15 +5,21 @@ package com.mycompany.grafoproyecto;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-
-
-
+/**
+ * representacion de grafo dirigido 
+ * @author Samir Nassar, Miguel Figueroa
+ */
 public class Grafo {
+    /** 
+     * guarda todos los usuarios por su nombre 
+     */
     private final Mapa<String, Usuario> usuarios; 
+    /** 
+     * guarda las relaciones 
+     */
     private final Mapa<Usuario, Lista<Usuario>> adjList; 
     /**
-    
-     * Inicializa las estructuras HashMap para usuarios y la lista de adyacencia.
+     * constructor del grafo 
      */
     public Grafo() {
         this.usuarios = new Mapa<>();
@@ -21,10 +27,9 @@ public class Grafo {
     }
 
     /**
-     * Agrega un nuevo usuario (nodo) al grafo dirigido.
-     * Si el usuario ya existe, este método no realiza ninguna acción.
-     * Se inicializa su lista de adyacencia como vacía.
-     * @param nombre El nombre de usuario (String) a agregar, ej: "@pepe".
+     * Agrega un nuevo usuarioal grafo
+     * si ya existe el usuario no hace nada 
+     * @param nombre El nombre de usuario a agregar
      */
     public void agregarUsuario(String nombre) {
         if (!usuarios.containsKey(nombre)) {
@@ -35,20 +40,22 @@ public class Grafo {
     }
 
     /**
-     * Agrega una arista dirigida (relación de seguimiento) al grafo.
-     * La arista va desde el usuario origen hacia el usuario destino.
-     * @param origenNombre El nombre del usuario que sigue (origen).
-     * @param destinoNombre El nombre del usuario que es seguido (destino).
+     * agrega relaciones desde un usuario especidfico a otro
+     * @param origenNombre El nombre del usuario que sigue 
+     * @param destinoNombre El nombre del usuario que es seguido 
      */
     public void agregarArista(String origenNombre, String destinoNombre) {
         Usuario origen = usuarios.get(origenNombre);
         Usuario destino = usuarios.get(destinoNombre);
         if (origen != null && destino != null) {
-            adjList.get(origen).Agregar(destino);
+            Lista<Usuario> vecinos = adjList.get(origen);
+            if (!vecinos.ContieneA(destino)) {
+                vecinos.Agregar(destino);
+            }
         } else {
             System.err.println("Advertencia de Carga: Relación inválida con usuarios no existentes.");
         }
-    }  
+    }
 
     
     /**
@@ -90,6 +97,59 @@ public class Grafo {
         }
         usuarios.remove(nombre);
         return true; 
+    }
+    
+    public void eliminarArista(String origenNombre, String destinoNombre) {
+        Usuario origen = getUsuario(origenNombre);
+        Usuario destino = getUsuario(destinoNombre);
+        
+        // Si ambos usuarios existen
+        if (origen != null && destino != null) {
+            // 1. Obtiene la lista de vecinos del origen
+            Lista<Usuario> vecinosDelOrigen = adjList.get(origen);
+            
+            // 2. Si la lista existe, elimina al destino de esa lista
+            if (vecinosDelOrigen != null) {
+                // Usa tu método Remover()
+                vecinosDelOrigen.Remover(destino); 
+            }
+        }
+    }
+    
+    /**
+     * Crea y devuelve un NUEVO objeto Grafo que es el transpuesto del actual.Recorre todas las aristas (origen -> destino) y las agrega como (destino -> origen) en el nuevo grafo.
+     * * @return Un objeto Grafo completamente nuevo que es el transpuesto.
+     * @return 
+     */
+    public Grafo obtenerGrafoTranspuesto() {
+        Grafo grafoTranspuesto = new Grafo();
+        Lista<Usuario> listaDeUsuarios = this.getListaDeUsuarios();
+        for (int i = 0; i < listaDeUsuarios.Tamaño(); i++) {
+            grafoTranspuesto.agregarUsuario(listaDeUsuarios.ObtenerPorIndice(i).getNombre());
+        }
+        for (int i = 0; i < listaDeUsuarios.Tamaño(); i++) {
+            Usuario origen = listaDeUsuarios.ObtenerPorIndice(i);
+            Lista<Usuario> vecinos = this.getVecinos(origen);           
+            for (int j = 0; j < vecinos.Tamaño(); j++) {
+                Usuario destino = vecinos.ObtenerPorIndice(j);
+                grafoTranspuesto.agregarArista(destino.getNombre(), origen.getNombre());
+            }
+        }
+        return grafoTranspuesto;
+    }
+     
+    public Lista<String> transformarrelaciones() {
+        Lista<String> relaciones = new Lista<>();
+        Lista<Usuario> listaOrigenes = adjList.keySet(); 
+        for (int i = 0; i < listaOrigenes.Tamaño(); i++) {
+            Usuario origen = listaOrigenes.ObtenerPorIndice(i);
+            Lista<Usuario> listaDestinos = adjList.get(origen);          
+            for (int j = 0; j < listaDestinos.Tamaño(); j++) {
+                Usuario destino = listaDestinos.ObtenerPorIndice(j);
+                relaciones.Agregar(origen.getNombre() + ", " + destino.getNombre());
+            }
+        }
+        return relaciones;
     }
     
 }

@@ -6,44 +6,57 @@ package com.mycompany.grafoproyecto;
  */
 
 /**
- *
- * @author samir
+ * Representacion de cada usuario 
+ * Esta clase representa los nodos del grafo 
+ * @author Samir Nassar, Miguel Figueroa 
  */public class Usuario {
+
     private final String nombre;
     
-    
-
-    // Constructor
-    public Usuario(String nombre) {
+        /**
+         * Constructor de objeto usuario 
+         * @param nombre 
+         */
+    public Usuario(String nombre) {    
         this.nombre = nombre;
-        
-    
     }
-
-
-//funciones para comparar dos objetos usuario 
+        /**
+         * Compara un objeto usuario con otro
+         * @param x objeto a comparar
+         * @return true si sus nombres son iguales, false si no 
+         */
     @Override
-    public boolean equals(Object o) {
-        if (this == o){
+    public boolean equals(Object x) {
+        if (this == x){
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (x == null || getClass() != x.getClass()){
             return false;
         }
-        Usuario usuario = (Usuario) o;
+        Usuario usuario = (Usuario) x;
         return nombre.equals(usuario.nombre);
     }
-
+        /** 
+         * Genera un hasCode para un usuario 
+         * @return hashCode del usuario
+         */
     @Override
     public int hashCode() {
         return nombre.hashCode();
     }
     
-   //revisar si se utiliza finalmente!!
+   /** 
+    * Devuelve el usuario en string 
+    * @return nombre de usuario 
+    */
     @Override
     public String toString() {
         return nombre;
     }
+    /**
+     * Devuelve el nombre de usuario 
+     * @return Nombre de usuario 
+     */
 public String getNombre() {
         return this.nombre;
     }    

@@ -5,70 +5,67 @@
 package com.mycompany.grafoproyecto;
 
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-
+/** 
+ * Implementacion pila 
+ * @author malej
+ * @param <T> tipo de dato que hay en la pila 
+ */
 public class Pila<T> {
 
-    
-    
-    private final List<T> elementos; 
-    
-    
+    /** 
+     * lista que almacena los datos de la pila 
+     */
+    private Lista<T> listaInterna;
+
+    /** 
+     * constructor de la pila 
+     */
     public Pila() {
-        this.elementos = new ArrayList<>();
-    }
-    
-    // -----------------------------------------------------------
-    
-    /**
-     * Inserta un elemento en la cima de la pila (LIFO: Last-In, First-Out).
-     * @param item Elemento a insertar.
-     */
-    public void push(T item) {
-        this.elementos.add(item);
+        this.listaInterna = new Lista<>();
     }
 
-    /**
-     * Elimina y devuelve el elemento en la cima de la pila.
-     * @return El elemento que estaba en la cima.
-     */
-    public T pop() {
-        if (isEmpty()) {
-            throw new EmptyStackException();
-        }
-        // El último elemento añadido está al final de la lista.
-        return this.elementos.remove(this.elementos.size() - 1);
-    }
-
-    /**
-     * Devuelve (sin eliminar) el elemento en la cima de la pila.
-     * @return El elemento en la cima.
-     
-     */
-    public T peek() {
-        if (isEmpty()) {
-            throw new EmptyStackException();
-        }
-        // El último elemento añadido está al final de la lista.
-        return this.elementos.get(this.elementos.size() - 1);
-    }
-    
-    /**
-     * Verifica si la pila está vacía.
-     * @return true si la pila no contiene elementos, false en caso contrario.
-     */
+   /** 
+    * verifica si la pila esta vacia 
+    * @return rue si lo esta, false si no 
+    */
     public boolean isEmpty() {
-        return this.elementos.isEmpty();
+        return listaInterna.esVacio();
     }
-    
-    /**
-     * Devuelve el tamaño actual de la pila.
-     * @return El número de elementos en la pila.
+
+    /** 
+     * devuelve el tamaño de la pila 
+     * @return tmaño de la pila
      */
     public int size() {
-        return this.elementos.size();
+        return listaInterna.Tamaño();
+    }
+
+    /** 
+     * Agrega un elemento a la cima de la pila 
+     * @param elemento elemento a agregar
+     */
+    public void Agregar(T elemento) { 
+        listaInterna.AgregarAlInicio(elemento);
+    }
+
+    /** 
+     * Obtiene el elemtno de la cima sin eliminarlo 
+     * @return Elemento de la cima o null si esta vacia 
+     */
+    public T ObtenerCima() {
+        if (isEmpty()) {
+            return null;
+        }      
+        return listaInterna.ObtenerPorIndice(0);
+    }
+    /**
+     * Remueve y devuelve el elemento de la cima de la pila 
+     * @return el elemento de la cima de la pila, null si esta vacia  
+     */
+    public T Eliminar() {
+        if (isEmpty()) {
+            return null;
+        }     
+        return listaInterna.RemoverDelInicio();
     }
 }
-

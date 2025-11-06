@@ -19,24 +19,31 @@ import java.awt.BorderLayout;
 public class VisualGrafo extends javax.swing.JFrame {
       
     private Grafo grafo;
-
+    private Graph miGrafoDeStream; 
+    private Lista<Lista<Usuario>> componentesEncontrados = null; 
     
     public VisualGrafo(Grafo grafo) {
         this.grafo = grafo; 
         initComponents();
         IniciarVisualizacion(); 
     }
-    
-    // lógica grafico
+    public VisualGrafo(Grafo grafo, Lista<Lista<Usuario>> componentes) {
+    this.grafo = grafo;
+    this.componentesEncontrados = componentes; 
+    initComponents();     
+    IniciarVisualizacion(); 
+    aplicarColoresComponentes(); 
+}
+
     private void IniciarVisualizacion() {
     System.setProperty("org.graphstream.ui", "swing");
-    Graph Grafo = new SingleGraph("Mi Grafo"); 
+    this.miGrafoDeStream = new SingleGraph("Mi Grafo");
     Lista<Usuario> todosLosUsuarios = this.grafo.getTodosLosUsuarios();
     for (int i = 0; i < todosLosUsuarios.Tamaño(); i++) { 
        Usuario u = todosLosUsuarios.ObtenerPorIndice(i);
        String nombreUsuario = u.toString();
-       Grafo.addNode(nombreUsuario);
-       Grafo.getNode(nombreUsuario).setAttribute("ui.label", nombreUsuario);
+      this.miGrafoDeStream.addNode(nombreUsuario);
+       this.miGrafoDeStream.getNode(nombreUsuario).setAttribute("ui.label", nombreUsuario);
     } 
     for (int i = 0; i < todosLosUsuarios.Tamaño(); i++) { 
         Usuario origen = todosLosUsuarios.ObtenerPorIndice(i);
@@ -46,28 +53,37 @@ public class VisualGrafo extends javax.swing.JFrame {
             Usuario destino = vecinos.ObtenerPorIndice(j);
             String nombreDestino = destino.toString();
             String idArista = nombreOrigen + "->" + nombreDestino;
-            Grafo.addEdge(idArista, nombreOrigen, nombreDestino, true);                
+            this.miGrafoDeStream.addEdge(idArista, nombreOrigen, nombreDestino, true);                
         }
     }    
-    SwingViewer viewer = new SwingViewer(Grafo, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+    SwingViewer viewer = new SwingViewer(this.miGrafoDeStream, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
     viewer.enableAutoLayout();
     org.graphstream.ui.swing_viewer.ViewPanel viewPanel = (org.graphstream.ui.swing_viewer.ViewPanel) viewer.addDefaultView(false);
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(viewPanel, BorderLayout.CENTER); 
     this.setTitle("Visualizacion Grafo");
     this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); 
-    this.pack();
-    this.setLocationRelativeTo(null);
-   
-    
+    this.setLocationRelativeTo(null);  
     }
+    
+    private void aplicarColoresComponentes() {
+        if (this.componentesEncontrados == null || this.miGrafoDeStream == null) {
+            return; 
+        }
+        String[] colores = { "red", "green", "blue", "orange", "cyan", "magenta" };        
+        for (int i = 0; i < this.componentesEncontrados.Tamaño(); i++) {
+            String colorActual = colores[i % colores.length]; 
+            Lista<Usuario> componente = this.componentesEncontrados.ObtenerPorIndice(i);            
+            for (int j = 0; j < componente.Tamaño(); j++) {
+                Usuario u = componente.ObtenerPorIndice(j);
+                org.graphstream.graph.Node nodo = miGrafoDeStream.getNode(u.toString());
+                if (nodo != null) {
+                    nodo.setAttribute("ui.style", "fill-color: " + colorActual + ";");
+                }
+            }
+        }
+    }   
 
-    
-
-    /**
-    
-    
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
