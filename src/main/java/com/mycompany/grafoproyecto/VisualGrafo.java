@@ -6,27 +6,42 @@ package com.mycompany.grafoproyecto;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.swing_viewer.SwingViewer;
-import org.graphstream.ui.swing_viewer.ViewPanel;
 import java.awt.BorderLayout;
 
 
 /**
- *
- * @author samir
+ * Ventan donde se usa GraphStream
+ * @author Samir Nassar, Miguel Figueroa 
  */
 public class VisualGrafo extends javax.swing.JFrame {
-      
+    /** 
+     * grafo con sus datos 
+     */  
     private Grafo grafo;
+    /** 
+     * el grafo que se va a visualizar 
+     */
     private Graph miGrafoDeStream; 
+    /** 
+     * lista con grtupo de usuarios 
+     */
     private Lista<Lista<Usuario>> componentesEncontrados = null; 
     
+    /** 
+     * constructor para mostrar el grafo
+     * @param grafo 
+     */
     public VisualGrafo(Grafo grafo) {
         this.grafo = grafo; 
         initComponents();
         IniciarVisualizacion(); 
     }
+    /** 
+     * constructor para mostrar el grafo con los componentes fuertemente conectados 
+     * @param grafo grafo que se va a visualizar 
+     * @param componentes lista de elementos fuertemente conectados
+     */
     public VisualGrafo(Grafo grafo, Lista<Lista<Usuario>> componentes) {
     this.grafo = grafo;
     this.componentesEncontrados = componentes; 
@@ -34,10 +49,14 @@ public class VisualGrafo extends javax.swing.JFrame {
     IniciarVisualizacion(); 
     aplicarColoresComponentes(); 
 }
-
+    /** 
+     * Metodo que construye el grafo con grahstream 
+     */
     private void IniciarVisualizacion() {
     System.setProperty("org.graphstream.ui", "swing");
     this.miGrafoDeStream = new SingleGraph("Mi Grafo");
+    String styleSheet ="node {" + "text-size: 20px;" + "text-style: bold;" + "text-alignment: under;" +    "}" +"edge {" +"   arrow-size: 10px, 5px;" + "}";
+    this.miGrafoDeStream.setAttribute("ui.stylesheet", styleSheet);
     Lista<Usuario> todosLosUsuarios = this.grafo.getTodosLosUsuarios();
     for (int i = 0; i < todosLosUsuarios.Tamaño(); i++) { 
        Usuario u = todosLosUsuarios.ObtenerPorIndice(i);
@@ -63,9 +82,12 @@ public class VisualGrafo extends javax.swing.JFrame {
     this.getContentPane().add(viewPanel, BorderLayout.CENTER); 
     this.setTitle("Visualizacion Grafo");
     this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); 
-    this.setLocationRelativeTo(null);  
+    this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); 
     }
     
+    /**
+     * recorre los componentes fuertemente conectados encontrados y se le asigna un color 
+     */
     private void aplicarColoresComponentes() {
         if (this.componentesEncontrados == null || this.miGrafoDeStream == null) {
             return; 

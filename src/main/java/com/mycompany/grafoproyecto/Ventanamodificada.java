@@ -9,25 +9,22 @@ import javax.swing.JOptionPane;
 import java.io.IOException;
 
 /**
- *
- * @author malej
+ * Ventana principal del programa 
+ * @author Miguel Figueroa, Samir Nassar 
  */
 public class Ventanamodificada extends javax.swing.JFrame {
     
 
     /**
-     * Creates new form Ventana
+     * constructor de la ventana 
+     * inicia los elemetnos de la interfaz
      */
     public Ventanamodificada() { 
         initComponents(); 
         try {
             ControladorGrafos.GrafoInicial();
         } catch (java.io.IOException e) {
-            // 3. Si falla, MUESTRA el error (ahora "this" sí funciona)
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Error fatal al cargar el archivo inicial: " + e.getMessage(), 
-                "Error de Carga", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Error fatal al cargar el archivo inicial: " + e.getMessage(), "Error de Carga",javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         this.setLocationRelativeTo(null);      
     } 
@@ -121,9 +118,9 @@ public class Ventanamodificada extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(MostrarGrafo)
-                    .addComponent(BotonCargarArchivo))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BotonCargarArchivo)
+                    .addComponent(MostrarGrafo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(EditarGrafo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -133,7 +130,10 @@ public class Ventanamodificada extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    /** 
+     * boton que abre un file chooser para cargar archivo .txt que representa grafo 
+     * @param evt 
+     */
     private void BotonCargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarArchivoActionPerformed
     JFileChooser selectorArchivos = new JFileChooser();
     selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -164,6 +164,10 @@ public class Ventanamodificada extends javax.swing.JFrame {
             }                                   
     }//GEN-LAST:event_BotonCargarArchivoActionPerformed
     }
+    /** 
+     * Boton que perimite al usuario ver el grafo 
+     * @param evt 
+     */
     private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
         Grafo GrafoCargado = ControladorGrafos.getGrafoActual(); 
         if(GrafoCargado == null || GrafoCargado.getTodosLosUsuarios().esVacio()){ 
@@ -173,7 +177,10 @@ public class Ventanamodificada extends javax.swing.JFrame {
             ventanaGraficaGrafo.setVisible(true);
         }
     }//GEN-LAST:event_MostrarGrafoActionPerformed
-
+    /** 
+     * boton que le da la opcion al usuario de eliminar o agregar a un usuario
+     * @param evt 
+     */
     private void EditarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarGrafoActionPerformed
     String[] Opciones = {"Agregar Usuario", "Eliminar Usuario", "Cancelar"};
     int seleccionOpciones = JOptionPane.showOptionDialog(null, "Seleeccione la Accion a Realizar", "Editar Grafo", JOptionPane.DEFAULT_OPTION, 
@@ -214,33 +221,25 @@ public class Ventanamodificada extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Accion Cancelada ");
     }
     }//GEN-LAST:event_EditarGrafoActionPerformed
-
+    /** 
+     * Boton que muestra los elementos fuertemente conectados 
+     * @param evt 
+     */
     private void AnalizarcomponentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnalizarcomponentesActionPerformed
-try {
-        
-       
-        Lista<Lista<Usuario>> componentes = ControladorGrafos.encontrarComponentes();
-        
-
-        Grafo grafoActual = ControladorGrafos.getGrafoActual();
-        
-      
+try {    
+        Lista<Lista<Usuario>> componentes = ControladorGrafos.encontrarComponentes();       
+        Grafo grafoActual = ControladorGrafos.getGrafoActual();             
         VisualGrafo ventanaColoreada = new VisualGrafo(grafoActual, componentes);
         ventanaColoreada.setVisible(true); 
-
-      
         javax.swing.JOptionPane.showMessageDialog(this, 
             "Análisis completado. Se encontraron " + componentes.Tamaño() + " componentes fuertemente conectados.", 
             "Análisis Exitoso", 
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
     } catch (Exception e) {
-
         javax.swing.JOptionPane.showMessageDialog(this, 
             "Error al analizar el grafo: " + e.getMessage(), 
             "Error de Análisis", 
-            javax.swing.JOptionPane.ERROR_MESSAGE);
-    
+            javax.swing.JOptionPane.ERROR_MESSAGE);    
     }//GEN-LAST:event_AnalizarcomponentesActionPerformed
     }
 

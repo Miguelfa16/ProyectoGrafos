@@ -68,19 +68,34 @@ public class Grafo {
    public Usuario getUsuario(String nombre) {
         return usuarios.get(nombre);
     }
-   
+   /**
+    * Devuelve una lista de todos los objetos usuario en el grafo 
+    * @return Lista ed usuarios 
+    */
     public Lista<Usuario> getListaDeUsuarios() {
         return usuarios.values();
     }
-    
+    /** 
+     * obtiene todos los usuarios que tienen relaciones 
+     * @return lista de usuarios  
+     */
     public Lista<Usuario> getTodosLosUsuarios() {
         return adjList.keySet(); 
 }
+    /** 
+     * devuelve una lista de vecinos de un usuario especifico 
+     * @param usuario Usuario dado
+     * @return Lista de usuarios a los que sigue 
+     */
     public Lista<Usuario> getVecinos(Usuario usuario) {
     Lista<Usuario> vecinos = adjList.get(usuario); 
     return (vecinos != null) ? vecinos : new Lista<>(); 
 }
-    
+    /**
+     * elimina un usuario del grafo 
+     * @param nombre usuario a eliminar 
+     * @return true si el usuario existia, false si no
+     */
     public boolean EliminarUsuario(String nombre){ 
         Usuario UsuarioEliminar = getUsuario(nombre); 
         if (UsuarioEliminar == null){ 
@@ -98,27 +113,25 @@ public class Grafo {
         usuarios.remove(nombre);
         return true; 
     }
-    
+    /** 
+     * elimina una relacion de dos usuarios especificos 
+     * @param origenNombre usario de donde sale la relacion 
+     * @param destinoNombre usuario donde llega la relacion 
+     */
     public void eliminarArista(String origenNombre, String destinoNombre) {
         Usuario origen = getUsuario(origenNombre);
         Usuario destino = getUsuario(destinoNombre);
-        
-        // Si ambos usuarios existen
         if (origen != null && destino != null) {
-            // 1. Obtiene la lista de vecinos del origen
             Lista<Usuario> vecinosDelOrigen = adjList.get(origen);
-            
-            // 2. Si la lista existe, elimina al destino de esa lista
             if (vecinosDelOrigen != null) {
-                // Usa tu método Remover()
                 vecinosDelOrigen.Remover(destino); 
             }
         }
     }
     
     /**
-     * Crea y devuelve un NUEVO objeto Grafo que es el transpuesto del actual.Recorre todas las aristas (origen -> destino) y las agrega como (destino -> origen) en el nuevo grafo.
-     * * @return Un objeto Grafo completamente nuevo que es el transpuesto.
+     * Crea y devuelve un nuevo objeto Grafo que es igual al original pero con las aristas invertidas 
+     * * @return objeto grafo 
      * @return 
      */
     public Grafo obtenerGrafoTranspuesto() {
@@ -137,7 +150,11 @@ public class Grafo {
         }
         return grafoTranspuesto;
     }
-     
+    
+    /** 
+     * transforma la lista de adyacencia en una lista de strings 
+     * @return lista de strings, cada string es una relacion  
+     */
     public Lista<String> transformarrelaciones() {
         Lista<String> relaciones = new Lista<>();
         Lista<Usuario> listaOrigenes = adjList.keySet(); 

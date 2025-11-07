@@ -6,6 +6,7 @@ usuarios
 @africa
 @caribedoble
 @newageforever
+@juan
 @mazinger
 @pepe
 @juanc
@@ -23,6 +24,7 @@ relaciones
 @sancho23, @terciopelo
 @africa, @cipriano
 @caribedoble, @africa
+@juan, @pepe
 @mazinger, @juanc
 @mazinger, @tuqui33
 @pepe, @mazinger
